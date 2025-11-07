@@ -1,12 +1,33 @@
+'use client';
+
 import Link from "next/link";
+import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import AuthForm from "../components/AuthForm";
+import UserProfile from "../components/UserProfile";
 
 export default function Home() {
-  const message = process.env["MESSAGE"] || "Hello!";
+  const message = process.env.NEXT_PUBLIC_MESSAGE || "Hello!";
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const { user } = useAuth();
+
   return (
     <main className="content">
       <h1 className="heading">Next.js on Firebase App Hosting</h1>
-      <h1>WTF, so complicated...</h1>
       <p>{message}</p>
+
+      {/* Authentication Section */}
+      <section style={{ margin: '40px 0', padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <h2>Authentication Demo</h2>
+        {user ? (
+          <UserProfile />
+        ) : (
+          <AuthForm 
+            mode={authMode}
+            onToggleMode={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
+          />
+        )}
+      </section>
 
       <section className="features">
         <article className="card">
@@ -30,6 +51,23 @@ export default function Home() {
               <code>/ssr/streaming</code>
             </Link>{" "}
             to see the server in action.
+          </p>
+        </article>
+        <article className="card">
+          <h2>Authentication & Protected Routes</h2>
+          <p>
+            Firebase Authentication is now integrated with this app. 
+            {user ? (
+              <>
+                You are signed in! Visit the{" "}
+                <Link href="/dashboard">
+                  <code>/dashboard</code>
+                </Link>{" "}
+                to see a protected route in action.
+              </>
+            ) : (
+              "Sign in above to access protected content."
+            )}
           </p>
         </article>
         <article className="card">
